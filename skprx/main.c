@@ -133,35 +133,41 @@ static void fillGamepadReport(const SceCtrlData *pad, struct GamepadReport *game
 	gamepad->report_id = 1;
 	gamepad->buttons = 0;
 
+	// Butonları Xbox/Windows standartlarına göre yeniden eşliyoruz
 	if (pad->buttons & SCE_CTRL_CROSS)
-		gamepad->buttons |= 1 << 0;
+		gamepad->buttons |= 1 << 0;  // X -> A (Windows Bit 0)
 	if (pad->buttons & SCE_CTRL_CIRCLE)
-		gamepad->buttons |= 1 << 1;
+		gamepad->buttons |= 1 << 1;  // O -> B (Windows Bit 1)
 	if (pad->buttons & SCE_CTRL_SQUARE)
-		gamepad->buttons |= 1 << 2;
+		gamepad->buttons |= 1 << 2;  // Kare -> X (Windows Bit 2)
 	if (pad->buttons & SCE_CTRL_TRIANGLE)
-		gamepad->buttons |= 1 << 3;
+		gamepad->buttons |= 1 << 3;  // Üçgen -> Y (Windows Bit 3)
 
+	// Tetikleyiciler (L1/R1)
 	if (pad->buttons & SCE_CTRL_LTRIGGER)
 		gamepad->buttons |= 1 << 4;
 	if (pad->buttons & SCE_CTRL_RTRIGGER)
 		gamepad->buttons |= 1 << 5;
 
+	// L2/R2 (reVita veya benzeri eklentilerle atanmışsa)
 	if (L2_PRESSED == 1)
 		gamepad->buttons |= 1 << 6;
 	if (R2_PRESSED == 1)
 		gamepad->buttons |= 1 << 7;
 
+	// Select / Start
 	if (pad->buttons & SCE_CTRL_SELECT)
 		gamepad->buttons |= 1 << 8;
 	if (pad->buttons & SCE_CTRL_START)
 		gamepad->buttons |= 1 << 9;
 
+	// L3/R3
 	if (L3_PRESSED == 1)
 		gamepad->buttons |= 1 << 10;
 	if (R3_PRESSED == 1)
 		gamepad->buttons |= 1 << 11;
 
+	// D-Pad (Yön tuşları)
 	if (pad->buttons & SCE_CTRL_UP)
 		gamepad->buttons |= 1 << 12;
 	if (pad->buttons & SCE_CTRL_DOWN)
@@ -171,12 +177,12 @@ static void fillGamepadReport(const SceCtrlData *pad, struct GamepadReport *game
 	if (pad->buttons & SCE_CTRL_RIGHT)
 		gamepad->buttons |= 1 << 15;
 
+	// Analoglar (Vita'nın 0-255 arası değerini -128/127 arasına çekiyoruz)
 	gamepad->left_x = (int8_t)pad->lx - 128;
 	gamepad->left_y = (int8_t)pad->ly - 128;
 	gamepad->right_x = (int8_t)pad->rx - 128;
 	gamepad->right_y = (int8_t)pad->ry - 128;
 }
-
 static int sendHidReport()
 {
 	static struct GamepadReport gamepad __attribute__((aligned(64))) = {0};
